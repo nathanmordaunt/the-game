@@ -1,0 +1,62 @@
+[gd_scene load_steps=18 format=2]
+
+[ext_resource path="res://Scripts/Player.gd" type="Script" id=1]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_IDLE_001.png" type="Texture" id=3]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_IDLE_003.png" type="Texture" id=4]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_RUN_006.png" type="Texture" id=7]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_IDLE_005.png" type="Texture" id=8]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_RUN_005.png" type="Texture" id=9]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_JUMP_005.png" type="Texture" id=10]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_IDLE_000.png" type="Texture" id=11]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_RUN_001.png" type="Texture" id=15]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_IDLE_004.png" type="Texture" id=16]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_IDLE_006.png" type="Texture" id=17]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_RUN_000.png" type="Texture" id=19]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_RUN_002.png" type="Texture" id=20]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_IDLE_002.png" type="Texture" id=21]
+[ext_resource path="res://Assets/Pirate-character-sprites/PNG/2/2_entity_000_RUN_004.png" type="Texture" id=22]
+
+[sub_resource type="SpriteFrames" id=10]
+animations = [ {
+"frames": [ ExtResource( 11 ), ExtResource( 3 ), ExtResource( 21 ), ExtResource( 4 ), ExtResource( 16 ), ExtResource( 8 ), ExtResource( 17 ) ],
+"loop": true,
+"name": "default",
+"speed": 7.0
+}, {
+"frames": [ ExtResource( 10 ) ],
+"loop": true,
+"name": "fall",
+"speed": 14.0
+}, {
+"frames": [ ExtResource( 19 ), ExtResource( 15 ), ExtResource( 20 ), ExtResource( 22 ), ExtResource( 9 ), ExtResource( 7 ) ],
+"loop": true,
+"name": "run",
+"speed": 14.0
+} ]
+
+[sub_resource type="RectangleShape2D" id=11]
+extents = Vector2( 1.25, 3 )
+
+[node name="Player01" type="KinematicBody2D"]
+scale = Vector2( 0.5, 0.5 )
+collision_mask = 13
+script = ExtResource( 1 )
+__meta__ = {
+"_edit_group_": true
+}
+
+[node name="AnimatedSprite" type="AnimatedSprite" parent="."]
+position = Vector2( 33.5, -6 )
+scale = Vector2( 0.187896, 0.249377 )
+frames = SubResource( 10 )
+frame = 2
+playing = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+light_mask = 31
+position = Vector2( -8, 14 )
+scale = Vector2( 32, 32 )
+shape = SubResource( 11 )
+
+[node name="Camera2D" type="Camera2D" parent="."]
+current = true
