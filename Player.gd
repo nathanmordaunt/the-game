@@ -1,49 +1,66 @@
 extends Actor
 
-onready var animated_sprite = $AnimatedSprite
-var playerNumber = 01;
+onready var sprite = $AnimatedSprite
 
+const KILL_CEIL = -300
+const KILL_FLOOR = 300
 
-func _physics_process(_delta) -> void:
-	Controls()
-	
-	print(get_direction())
-	
+export var cam_speed = 250
+
+var direction = Vector2(0, 0);
+var acceleration = 1
+
+func _physics_process(dt) -> void:
+	process_kill_barriers()
+	direction = get_direction()
+	process_input(dt)
+	self.velocity = move_and_slide(self.velocity, FLOOR_STD)
+	acceleration += 0.001
+
+func _process(dt):
+	if direction.y == 1.0:
+		sprite.play("flap-up")
+	if direction.y == -1.0:
+		sprite.play("flap-down")
+	if direction.x == -1.0:
+		sprite.flip_h = true
+	if direction.x == 1.0:
+		sprite.flip_h = false
+
+	self.position.x += cam_speed * dt * acceleration
 
 #gets input key from the player
 func get_direction() -> Vector2:
-	return Vector2 (Input.get_action_strength("move_right") - Input.get_action_strength("move_left"), -1.0
-	if Input.is_action_just_pressed("move_up") and is_on_floor() 
-	else 1.0)
+	var y = 1.0
+	if Input.is_action_just_pressed("up"):
+		y = -1.0
+	return Vector2(0.0, y)
 
 #processes math calculations based on input
-func calc_velocity(linear_velocity: Vector2, dir: Vector2, speed: Vector2, jump_interupt: bool) -> Vector2:
-	var new_velocity: = linear_velocity
-	new_velocity.x = speed.x * dir.x
-	new_velocity.y += gravity * get_physics_process_delta_time()
-	if dir.y == -1.0:
-		new_velocity.y = speed.y * dir.y
+func calc_velocity(
+	dt: float,
+	linear_velocity: Vector2,
+	direction: Vector2,
+	speed: Vector2,
+	jump_interupt: bool
+) -> Vector2:
+	var new_velocity = linear_velocity
+	new_velocity.x = speed.x * direction.x
+	new_velocity.y += gravity * dt
+	if direction.y == -1.0:
+		new_velocity.y = speed.y * direction.y
 	if jump_interupt:
 		new_velocity.y = 0.0
 	return new_velocity
 
-func Controls() ->void:
-	var dir: = get_direction()
-	var jump_interupt = Input.is_action_just_released("move_up") and velocity.y < 0.0
-	velocity = calc_velocity(velocity, dir, speed, jump_interupt)
-	velocity = move_and_slide(velocity, FLOOR_STD)
-	Animations(dir)
+func process_input(dt) -> void:
+	var jump_interupt = Input.is_action_just_released("up") and self.velocity.y < 0.0
+	self.velocity = calc_velocity(dt, self.velocity, direction, speed, jump_interupt)
 
-#controlling animations
-func Animations(direction: Vector2) -> void:
-	if direction.x == 0.0 and direction.y == 1.0:
-		animated_sprite.play("default")
-	if  Input.is_action_just_pressed("move_up"):
-		animated_sprite.play("fall")
-	if  Input.is_action_pressed("move_right") && is_on_floor(): 
-		animated_sprite.play("run")
-		animated_sprite.flip_h = false
-	if  Input.is_action_pressed("move_left") && is_on_floor():
-		animated_sprite.play("run")
-		animated_sprite.flip_h = true
+# if we hit a ceiling or floor, tp actor to origin.
+func process_kill_barriers():
+	if position.y > KILL_FLOOR:
+		position = Vector2(0, 0)
+	if position.y < KILL_CEIL:
+		position = Vector2(0, 0)
 
